@@ -69,7 +69,14 @@
   font-size: 13px;
 }
 
-.auth-form input {
+.auth-form-inline {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.auth-form input,
+.auth-form-inline input {
   border: 1px solid var(--border);
   background: var(--bg);
   color: var(--text);

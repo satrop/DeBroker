@@ -1,5 +1,64 @@
 import { useState } from 'react'
 
+function SignedInBar({ auth }) {
+  const [changingPassword, setChangingPassword] = useState(false)
+  const [newPassword, setNewPassword] = useState('')
+  const [error, setError] = useState('')
+  const [notice, setNotice] = useState('')
+  const [busy, setBusy] = useState(false)
+
+  async function submitPassword(e) {
+    e.preventDefault()
+    setError('')
+    setNotice('')
+    setBusy(true)
+    try {
+      await auth.updatePassword(newPassword)
+      setNotice('Password set.')
+      setNewPassword('')
+      setChangingPassword(false)
+    } catch (err) {
+      setError(err.message)
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  return (
+    <div className="auth-bar">
+      <span className="auth-status">Synced as {auth.user.email}</span>
+      {changingPassword ? (
+        <form className="auth-form-inline" onSubmit={submitPassword}>
+          <input
+            type="password"
+            placeholder="New password"
+            value={newPassword}
+            onChange={(e) => setNewPassword(e.target.value)}
+            minLength={6}
+            required
+          />
+          <button type="submit" disabled={busy}>
+            Save
+          </button>
+          <button type="button" onClick={() => setChangingPassword(false)}>
+            Cancel
+          </button>
+        </form>
+      ) : (
+        <button type="button" onClick={() => setChangingPassword(true)}>
+          {/* First time in via an invite link? Set a password here so you can sign in directly next time. */}
+          Set / change password
+        </button>
+      )}
+      <button type="button" onClick={auth.signOut}>
+        Sign out
+      </button>
+      {error && <span className="auth-error">{error}</span>}
+      {notice && <span className="auth-notice">{notice}</span>}
+    </div>
+  )
+}
+
 export default function AuthBar({ auth }) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -9,14 +68,7 @@ export default function AuthBar({ auth }) {
   const [busy, setBusy] = useState(false)
 
   if (auth.user) {
-    return (
-      <div className="auth-bar">
-        <span className="auth-status">Synced as {auth.user.email}</span>
-        <button type="button" onClick={auth.signOut}>
-          Sign out
-        </button>
-      </div>
-    )
+    return <SignedInBar auth={auth} />
   }
 
   async function submit(e) {

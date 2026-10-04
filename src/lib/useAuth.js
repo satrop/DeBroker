@@ -34,5 +34,10 @@ export function useAuth() {
     await supabase.auth.signOut()
   }
 
-  return { session, user: session?.user ?? null, loading, signIn, signUp, signOut }
+  async function updatePassword(newPassword) {
+    const { error } = await supabase.auth.updateUser({ password: newPassword })
+    if (error) throw error
+  }
+
+  return { session, user: session?.user ?? null, loading, signIn, signUp, signOut, updatePassword }
 }
