@@ -12,7 +12,7 @@
   { "id": "ussearch", "name": "USSearch", "optOutUrl": "https://www.ussearch.com/opt-out/", "method": "form", "notes": "" },
   { "id": "publicrecordsnow", "name": "PublicRecordsNow", "optOutUrl": "https://www.publicrecordsnow.com/optout/", "method": "form", "notes": "" },
   { "id": "checkpeople", "name": "CheckPeople", "optOutUrl": "https://www.checkpeople.com/opt-out", "method": "form", "notes": "" },
-  { "id": "nuwber", "name": "Nuwber", "optOutUrl": "https://nuwber.com/removal/link", "method": "email", "notes": "Sends a removal confirmation link to your email." },
+  { "id": "nuwber", "name": "Nuwber", "optOutUrl": "mailto:support@nuwber.com?subject=CCPA%20Opt-Out%20Request", "method": "email", "notes": "nuwber.com itself appears to be down (confirmed dead as of Oct 2026). Nuwber Inc. is still an active registered data broker though — email support@nuwber.com directly to request opt-out/deletion, or call (844) 912-1292. Worth rechecking occasionally in case the site comes back." },
   { "id": "thatsthem", "name": "ThatsThem", "optOutUrl": "https://thatsthem.com/optout", "method": "form", "notes": "" },
   { "id": "instantcheckmate", "name": "Instant Checkmate", "optOutUrl": "https://www.instantcheckmate.com/opt-out/", "method": "form", "notes": "" },
   { "id": "peekyou", "name": "PeekYou", "optOutUrl": "https://www.peekyou.com/about/contact/optout/", "method": "form", "notes": "" },
