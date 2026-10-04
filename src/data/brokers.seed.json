@@ -1,6 +1,6 @@
 [
   { "id": "whitepages", "name": "Whitepages", "optOutUrl": "https://www.whitepages.com/suppression-requests", "method": "form", "notes": "" },
-  { "id": "spokeo", "name": "Spokeo", "optOutUrl": "https://www.spokeo.com/optout", "method": "form", "notes": "" },
+  { "id": "spokeo", "name": "Spokeo", "optOutUrl": "https://www.spokeo.com/optout", "method": "form", "notes": "First search your name on spokeo.com and open your actual listing — the opt-out form needs that specific profile URL (e.g. spokeo.com/Smith-Sample/Houston/TX/p12345678), not just your email." },
   { "id": "beenverified", "name": "BeenVerified", "optOutUrl": "https://www.beenverified.com/app/optout/search", "method": "form", "notes": "Cloudflare human-verification check often appears before the form loads — just complete it." },
   { "id": "truthfinder", "name": "TruthFinder", "optOutUrl": "https://www.truthfinder.com/opt-out/", "method": "form", "notes": "" },
   { "id": "intelius", "name": "Intelius", "optOutUrl": "https://www.intelius.com/opt-out/", "method": "form", "notes": "" },
