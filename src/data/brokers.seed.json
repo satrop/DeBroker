@@ -5,7 +5,7 @@
   { "id": "truthfinder", "name": "TruthFinder", "optOutUrl": "https://www.truthfinder.com/opt-out/", "method": "form", "notes": "" },
   { "id": "intelius", "name": "Intelius", "optOutUrl": "https://www.intelius.com/opt-out/", "method": "form", "notes": "" },
   { "id": "peoplefinders", "name": "PeopleFinders", "optOutUrl": "https://www.peoplefinders.com/manage/", "method": "email", "notes": "Requires email verification step." },
-  { "id": "mylife", "name": "MyLife", "optOutUrl": "https://www.mylife.com/ccpa/index.pubview", "method": "form", "notes": "Known to be aggressive about re-listing; check carefully on recheck." },
+  { "id": "mylife", "name": "MyLife", "optOutUrl": "https://www.mylife.com/privacyrequest", "method": "form", "notes": "Known to be aggressive about re-listing; check carefully on recheck. Page can render blank on first load (Cloudflare bot-check) — reload if that happens." },
   { "id": "radaris", "name": "Radaris", "optOutUrl": "https://radaris.com/control/privacy", "method": "form", "notes": "" },
   { "id": "fastpeoplesearch", "name": "FastPeopleSearch", "optOutUrl": "https://www.fastpeoplesearch.com/removal", "method": "form", "notes": "" },
   { "id": "peoplelooker", "name": "PeopleLooker", "optOutUrl": "https://www.peoplelooker.com/optout", "method": "form", "notes": "" },
