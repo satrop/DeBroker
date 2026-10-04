@@ -15,6 +15,7 @@ export default function BrokerList({ brokers, actions }) {
           onSubmit={actions.submitOptOut}
           onRecheck={actions.logRecheck}
           onUpdateNotes={(id, notes) => actions.updateBroker(id, { notes })}
+          onUpdateUrl={(id, optOutUrl) => actions.updateBroker(id, { optOutUrl })}
           onRemove={actions.removeBroker}
         />
       ))}

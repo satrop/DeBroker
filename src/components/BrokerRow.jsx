@@ -2,21 +2,35 @@ import { useState } from 'react'
 import StatusBadge from './StatusBadge'
 import { formatDate, isDue } from '../lib/dates'
 
-export default function BrokerRow({ broker, onSetFoundOnSearch, onSubmit, onRecheck, onUpdateNotes, onRemove }) {
+export default function BrokerRow({ broker, onSetFoundOnSearch, onSubmit, onRecheck, onUpdateNotes, onUpdateUrl, onRemove }) {
   const [expanded, setExpanded] = useState(false)
   const [notes, setNotes] = useState(broker.notes)
+  const [editingUrl, setEditingUrl] = useState(false)
+  const [urlDraft, setUrlDraft] = useState(broker.optOutUrl)
   const due = isDue(broker.nextRecheckDate)
 
   function saveNotes() {
     if (notes !== broker.notes) onUpdateNotes(broker.id, notes)
   }
 
+  function saveUrl(e) {
+    e.preventDefault()
+    onUpdateUrl(broker.id, urlDraft)
+    setEditingUrl(false)
+  }
+
   return (
     <div className={`broker-row ${due ? 'is-due' : ''}`}>
       <div className="broker-row-main" onClick={() => setExpanded((v) => !v)}>
         <div className="broker-name">
-          <a href={broker.optOutUrl} target="_blank" rel="noreferrer" onClick={(e) => e.stopPropagation()}>
-            {broker.name}
+          <a
+            className="broker-link"
+            href={broker.optOutUrl}
+            target="_blank"
+            rel="noreferrer noopener"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {broker.name} <span className="external-icon">↗</span>
           </a>
           <span className="method-tag">{broker.method}</span>
         </div>
@@ -28,15 +42,45 @@ export default function BrokerRow({ broker, onSetFoundOnSearch, onSubmit, onRech
 
       {expanded && (
         <div className="broker-row-detail">
-          <div className="workflow-actions">
-            <label>
+          {editingUrl ? (
+            <form className="edit-url-form" onSubmit={saveUrl}>
               <input
-                type="checkbox"
-                checked={broker.foundOnSearch}
-                onChange={(e) => onSetFoundOnSearch(broker.id, e.target.checked)}
+                type="url"
+                value={urlDraft}
+                onChange={(e) => setUrlDraft(e.target.value)}
+                placeholder="Opt-out URL"
               />
-              Found on search
-            </label>
+              <button type="submit">Save</button>
+              <button type="button" onClick={() => { setUrlDraft(broker.optOutUrl); setEditingUrl(false) }}>
+                Cancel
+              </button>
+            </form>
+          ) : (
+            <button type="button" className="link-button edit-url-toggle" onClick={() => setEditingUrl(true)}>
+              Edit opt-out link
+            </button>
+          )}
+
+          <div className="workflow-actions">
+            {broker.status === 'not_checked' && !broker.foundOnSearch && (
+              <>
+                <button type="button" onClick={() => onSetFoundOnSearch(broker.id, true)}>
+                  Found on search
+                </button>
+                <button type="button" onClick={() => onSetFoundOnSearch(broker.id, false)}>
+                  Checked — not found
+                </button>
+              </>
+            )}
+
+            {broker.status === 'not_found' && (
+              <>
+                <span className="workflow-note">Checked {formatDate(broker.history.at(-1)?.date)} — not listed</span>
+                <button type="button" onClick={() => onSetFoundOnSearch(broker.id, true)}>
+                  Actually, found it
+                </button>
+              </>
+            )}
 
             {broker.foundOnSearch && broker.status !== 'submitted' && (
               <button type="button" onClick={() => onSubmit(broker.id)}>

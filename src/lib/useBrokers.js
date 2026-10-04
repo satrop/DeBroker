@@ -91,8 +91,8 @@ export function useBrokers(userId) {
       prev.map((b) => {
         if (b.id !== id) return b
         const updated = found
-          ? { ...b, foundOnSearch: true }
-          : { ...b, foundOnSearch: false, status: 'not_found' }
+          ? { ...b, foundOnSearch: true, status: b.status === 'not_found' ? 'not_checked' : b.status }
+          : { ...b, foundOnSearch: false, status: 'not_found', history: addHistory(b, 'checked-not-found') }
         remoteUpsert(updated)
         return updated
       }),
