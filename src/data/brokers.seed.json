@@ -16,7 +16,7 @@
   { "id": "thatsthem", "name": "ThatsThem", "optOutUrl": "https://thatsthem.com/optout", "method": "form", "notes": "" },
   { "id": "instantcheckmate", "name": "Instant Checkmate", "optOutUrl": "https://www.instantcheckmate.com/opt-out/", "method": "form", "notes": "" },
   { "id": "peekyou", "name": "PeekYou", "optOutUrl": "https://www.peekyou.com/about/contact/optout/", "method": "form", "notes": "" },
-  { "id": "familytreenow", "name": "FamilyTreeNow", "optOutUrl": "https://www.familytreenow.com/optout", "method": "form", "notes": "" },
+  { "id": "familytreenow", "name": "FamilyTreeNow", "optOutUrl": "https://www.familytreenow.com/optout", "method": "email", "notes": "URL is correct even though it looks like a search form — per their own FAQ, you locate your record, confirm by email, then an opt-out action appears for that record. Often sits behind a Cloudflare \"verify you're human\" check first." },
   { "id": "zabasearch", "name": "ZabaSearch", "optOutUrl": "https://www.zabasearch.com/block_records/", "method": "form", "notes": "" },
   { "id": "advancedbackgroundchecks", "name": "AdvancedBackgroundChecks", "optOutUrl": "https://www.advancedbackgroundchecks.com/opt-out", "method": "email", "notes": "Page is titled \"opt out of sale and sharing\" (CCPA legal wording) and doesn't obviously say \"remove me\" — it's the real removal flow anyway. Enter name+email, click the confirmation link they email you, then fill out the actual opt-out form that opens. Can take up to 45 days to fully process (slower than most of these)." }
 ]
