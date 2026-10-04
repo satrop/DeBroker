@@ -91,9 +91,16 @@ export function useBrokers(userId) {
     setBrokers((prev) =>
       prev.map((b) => {
         if (b.id !== id) return b
+        const today = todayISO()
         const updated = found
-          ? { ...b, foundOnSearch: true, status: b.status === 'not_found' ? 'not_checked' : b.status }
-          : { ...b, foundOnSearch: false, status: 'not_found', history: addHistory(b, 'checked-not-found') }
+          ? { ...b, foundOnSearch: true, status: b.status === 'not_found' ? 'not_checked' : b.status, nextRecheckDate: null }
+          : {
+              ...b,
+              foundOnSearch: false,
+              status: 'not_found',
+              nextRecheckDate: addDaysISO(today, RECHECK_DAYS),
+              history: addHistory(b, 'checked-not-found'),
+            }
         remoteUpsert(updated)
         return updated
       }),
@@ -123,15 +130,23 @@ export function useBrokers(userId) {
       prev.map((b) => {
         if (b.id !== id) return b
         const today = todayISO()
-        const updated =
-          result === 'reappeared'
-            ? { ...b, status: 'reappeared', nextRecheckDate: null, history: addHistory(b, 'reappeared') }
-            : {
-                ...b,
-                status: 'confirmed_removed',
-                nextRecheckDate: addDaysISO(today, RECHECK_DAYS),
-                history: addHistory(b, 'rechecked-clean'),
-              }
+        let updated
+        if (result === 'reappeared') {
+          updated = { ...b, status: 'reappeared', nextRecheckDate: null, history: addHistory(b, 'reappeared') }
+        } else if (result === 'still-not-found') {
+          updated = {
+            ...b,
+            nextRecheckDate: addDaysISO(today, RECHECK_DAYS),
+            history: addHistory(b, 'checked-not-found'),
+          }
+        } else {
+          updated = {
+            ...b,
+            status: 'confirmed_removed',
+            nextRecheckDate: addDaysISO(today, RECHECK_DAYS),
+            history: addHistory(b, 'rechecked-clean'),
+          }
+        }
         remoteUpsert(updated)
         return updated
       }),

@@ -96,8 +96,11 @@ export default function BrokerRow({ broker, onSetFoundOnSearch, onSubmit, onRech
             {broker.status === 'not_found' && (
               <>
                 <span className="workflow-note">Checked {formatDate(broker.history.at(-1)?.date)} — not listed</span>
+                <button type="button" onClick={() => onRecheck(broker.id, 'still-not-found')}>
+                  Recheck: still not found
+                </button>
                 <button type="button" onClick={() => onSetFoundOnSearch(broker.id, true)}>
-                  Actually, found it
+                  Recheck: now listed
                 </button>
               </>
             )}
