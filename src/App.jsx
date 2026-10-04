@@ -1,5 +1,7 @@
 import { useMemo, useState } from 'react'
 import { useBrokers } from './lib/useBrokers'
+import { useAuth } from './lib/useAuth'
+import { supabaseEnabled } from './lib/supabaseClient'
 import { isDue, todayISO } from './lib/dates'
 import DueBanner from './components/DueBanner'
 import Filters from './components/Filters'
@@ -7,13 +9,22 @@ import BrokerList from './components/BrokerList'
 import AddBrokerForm from './components/AddBrokerForm'
 import Analytics from './components/Analytics'
 import ExportImportBar from './components/ExportImportBar'
+import AuthBar from './components/AuthBar'
 import './App.css'
 
 const DEFAULT_FILTERS = { status: 'all', method: 'all', dueOnly: false, search: '' }
 
+const SYNC_LABELS = {
+  local: supabaseEnabled ? 'Not signed in — saved to this browser only' : 'Saved to this browser only',
+  syncing: 'Syncing…',
+  synced: 'Synced to cloud',
+  error: 'Sync error — your changes are still saved locally',
+}
+
 export default function App() {
-  const brokersState = useBrokers()
-  const { brokers, addBroker, exportJSON, importJSON, dueCount } = brokersState
+  const auth = useAuth()
+  const brokersState = useBrokers(auth.user?.id)
+  const { brokers, addBroker, exportJSON, importJSON, dueCount, syncState, syncError } = brokersState
   const [tab, setTab] = useState('list')
   const [filters, setFilters] = useState(DEFAULT_FILTERS)
 
@@ -41,6 +52,8 @@ export default function App() {
         </nav>
       </header>
 
+      {supabaseEnabled && !auth.loading && <AuthBar auth={auth} />}
+
       <DueBanner
         dueCount={dueCount}
         onShowDue={() => {
@@ -62,8 +75,9 @@ export default function App() {
       <footer className="app-footer">
         <ExportImportBar onExport={exportJSON} onImport={importJSON} />
         <p className="footer-note">
-          Data is stored only in this browser (localStorage). Use Export/Import to move it between devices. Last
-          loaded {todayISO()}.
+          {SYNC_LABELS[syncState]}
+          {syncState === 'error' && syncError ? ` (${syncError})` : ''}. Export/Import is still available as a manual
+          backup. Last loaded {todayISO()}.
         </p>
       </footer>
     </div>

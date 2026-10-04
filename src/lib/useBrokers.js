@@ -1,7 +1,9 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import seedData from '../data/brokers.seed.json'
 import { loadBrokers, saveBrokers, exportBrokersFile, parseImportedBrokers } from './storage'
 import { addDaysISO, todayISO, RECHECK_DAYS } from './dates'
+import { supabaseEnabled } from './supabaseClient'
+import { fetchRemoteBrokers, upsertRemoteBroker, deleteRemoteBroker, replaceAllRemoteBrokers } from './brokersRemote'
 
 function normalize(broker) {
   return {
@@ -20,15 +22,64 @@ function slugify(name) {
   return `${base}-${Math.random().toString(36).slice(2, 6)}`
 }
 
-export function useBrokers() {
+export function useBrokers(userId) {
   const [brokers, setBrokers] = useState(() => loadBrokers(seedData.map(normalize)))
+  const [syncState, setSyncState] = useState('local') // 'local' | 'syncing' | 'synced' | 'error'
+  const [syncError, setSyncError] = useState('')
+  const hasHydratedForUser = useRef(null)
 
   useEffect(() => {
     saveBrokers(brokers)
   }, [brokers])
 
-  function updateBroker(id, patch) {
-    setBrokers((prev) => prev.map((b) => (b.id === id ? { ...b, ...patch } : b)))
+  // On sign-in, pull the cloud copy. If the cloud has nothing yet, seed it
+  // with whatever's currently in this browser (first-time migration).
+  useEffect(() => {
+    if (!supabaseEnabled || !userId || hasHydratedForUser.current === userId) return
+    hasHydratedForUser.current = userId
+    setSyncState('syncing')
+    setSyncError('')
+    ;(async () => {
+      try {
+        const remote = await fetchRemoteBrokers(userId)
+        if (remote.length === 0) {
+          await replaceAllRemoteBrokers(userId, brokers)
+        } else {
+          setBrokers(remote)
+        }
+        setSyncState('synced')
+      } catch (err) {
+        setSyncState('error')
+        setSyncError(err.message)
+      }
+    })()
+    // brokers intentionally excluded: this runs once per sign-in to decide
+    // between "pull from cloud" and "push current browser state up"
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userId])
+
+  useEffect(() => {
+    if (!userId) hasHydratedForUser.current = null
+  }, [userId])
+
+  function remoteUpsert(broker) {
+    if (!supabaseEnabled || !userId) return
+    upsertRemoteBroker(userId, broker)
+      .then(() => setSyncState('synced'))
+      .catch((err) => {
+        setSyncState('error')
+        setSyncError(err.message)
+      })
+  }
+
+  function remoteDelete(id) {
+    if (!supabaseEnabled || !userId) return
+    deleteRemoteBroker(userId, id)
+      .then(() => setSyncState('synced'))
+      .catch((err) => {
+        setSyncState('error')
+        setSyncError(err.message)
+      })
   }
 
   function addHistory(broker, event) {
@@ -39,10 +90,11 @@ export function useBrokers() {
     setBrokers((prev) =>
       prev.map((b) => {
         if (b.id !== id) return b
-        if (found) {
-          return { ...b, foundOnSearch: true, status: b.status === 'not_checked' ? 'not_checked' : b.status }
-        }
-        return { ...b, foundOnSearch: false, status: 'not_found' }
+        const updated = found
+          ? { ...b, foundOnSearch: true }
+          : { ...b, foundOnSearch: false, status: 'not_found' }
+        remoteUpsert(updated)
+        return updated
       }),
     )
   }
@@ -52,13 +104,15 @@ export function useBrokers() {
       prev.map((b) => {
         if (b.id !== id) return b
         const today = todayISO()
-        return {
+        const updated = {
           ...b,
           status: 'submitted',
           lastSubmittedDate: today,
           nextRecheckDate: addDaysISO(today, RECHECK_DAYS),
           history: addHistory(b, 'submitted'),
         }
+        remoteUpsert(updated)
+        return updated
       }),
     )
   }
@@ -68,20 +122,28 @@ export function useBrokers() {
       prev.map((b) => {
         if (b.id !== id) return b
         const today = todayISO()
-        if (result === 'reappeared') {
-          return {
-            ...b,
-            status: 'reappeared',
-            nextRecheckDate: null,
-            history: addHistory(b, 'reappeared'),
-          }
-        }
-        return {
-          ...b,
-          status: 'confirmed_removed',
-          nextRecheckDate: addDaysISO(today, RECHECK_DAYS),
-          history: addHistory(b, 'rechecked-clean'),
-        }
+        const updated =
+          result === 'reappeared'
+            ? { ...b, status: 'reappeared', nextRecheckDate: null, history: addHistory(b, 'reappeared') }
+            : {
+                ...b,
+                status: 'confirmed_removed',
+                nextRecheckDate: addDaysISO(today, RECHECK_DAYS),
+                history: addHistory(b, 'rechecked-clean'),
+              }
+        remoteUpsert(updated)
+        return updated
+      }),
+    )
+  }
+
+  function updateBroker(id, patch) {
+    setBrokers((prev) =>
+      prev.map((b) => {
+        if (b.id !== id) return b
+        const updated = { ...b, ...patch }
+        remoteUpsert(updated)
+        return updated
       }),
     )
   }
@@ -95,10 +157,12 @@ export function useBrokers() {
       notes: notes || '',
     })
     setBrokers((prev) => [...prev, newBroker])
+    remoteUpsert(newBroker)
   }
 
   function removeBroker(id) {
     setBrokers((prev) => prev.filter((b) => b.id !== id))
+    remoteDelete(id)
   }
 
   function exportJSON() {
@@ -108,6 +172,15 @@ export function useBrokers() {
   function importJSON(text) {
     const imported = parseImportedBrokers(text).map(normalize)
     setBrokers(imported)
+    if (supabaseEnabled && userId) {
+      setSyncState('syncing')
+      replaceAllRemoteBrokers(userId, imported)
+        .then(() => setSyncState('synced'))
+        .catch((err) => {
+          setSyncState('error')
+          setSyncError(err.message)
+        })
+    }
   }
 
   const dueCount = useMemo(
@@ -126,5 +199,7 @@ export function useBrokers() {
     exportJSON,
     importJSON,
     dueCount,
+    syncState,
+    syncError,
   }
 }

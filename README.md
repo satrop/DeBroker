@@ -9,15 +9,22 @@ npm install
 npm run dev
 ```
 
-## Persistence — read this
+## Persistence
 
-There is no backend. All data lives in this browser's `localStorage`, scoped to whichever device/browser you're using. That means:
+Data is backed by [Supabase](https://supabase.com) (hosted Postgres + REST API) when configured, with `localStorage` as a local cache and offline fallback. Without Supabase configured, the app runs in local-only mode (same behavior as before — nothing syncs, clearing site data wipes your tracker).
 
-- Nothing syncs automatically between your phone and laptop.
-- Clearing site data / browser storage wipes your tracker.
-- To move data between devices, use **Export JSON** on one device and **Import JSON** on the other (footer of the app).
+### Setting up Supabase
 
-If you later want real cross-device sync, the simplest upgrade path is a `data.json` file committed to this repo that you edit via GitHub's web UI or Claude Code — that's a step up in complexity worth deciding on deliberately rather than building by default.
+1. Create a free project at [supabase.com](https://supabase.com).
+2. In the **SQL Editor**, run [`supabase/schema.sql`](supabase/schema.sql) once — it creates the `brokers` table with row-level security so each signed-in user only ever sees their own rows.
+3. In **Settings → API**, copy the **Project URL** and the **anon public key** (this key is safe to expose in client code by design — Supabase's security model is enforced by the row-level security policy, not by keeping the key secret).
+4. Locally: copy `.env.example` to `.env` and fill in both values.
+5. In the GitHub repo's **Settings → Secrets and variables → Actions**, add two repository secrets: `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` (same values) — the deploy workflow bakes them into the production build.
+6. Open the app, sign up with an email/password (just for yourself), and your current browser data is pushed to the cloud automatically on first sign-in. From then on, every change syncs to Supabase and is also cached locally.
+
+Since this is a single-user tool, consider turning off public sign-ups once your own account exists (**Authentication → Providers → Email**, or **Authentication → Settings**) — not required for data safety (row-level security already isolates every user's rows), just to keep the project tidy.
+
+Export/Import JSON (footer of the app) still works as a manual backup regardless of whether Supabase is configured.
 
 ## Data model
 
@@ -31,4 +38,4 @@ Pushing to `main` runs `.github/workflows/deploy.yml`, which builds the app and 
 
 ## Out of scope (by design)
 
-No automated opt-out submission (brokers use CAPTCHAs/verification steps that block that), no push/email reminders (no backend to send them from — the in-app "due for recheck" banner is the reminder), no long-tail broker list beyond the top 20 + whatever you add manually, no multi-user/login, no real-time cross-device sync.
+No automated opt-out submission (brokers use CAPTCHAs/verification steps that block that), no push/email reminders (the in-app "due for recheck" banner is the reminder), no long-tail broker list beyond the top 20 + whatever you add manually, no multi-user support beyond "whoever can sign into your Supabase project," no realtime live sync across simultaneously-open tabs/devices (each syncs on its own actions and on sign-in, not via a live subscription).
