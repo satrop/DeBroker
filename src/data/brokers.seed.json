@@ -18,5 +18,5 @@
   { "id": "peekyou", "name": "PeekYou", "optOutUrl": "https://www.peekyou.com/about/contact/optout/", "method": "form", "notes": "" },
   { "id": "familytreenow", "name": "FamilyTreeNow", "optOutUrl": "https://www.familytreenow.com/optout", "method": "form", "notes": "" },
   { "id": "zabasearch", "name": "ZabaSearch", "optOutUrl": "https://www.zabasearch.com/block_records/", "method": "form", "notes": "" },
-  { "id": "advancedbackgroundchecks", "name": "AdvancedBackgroundChecks", "optOutUrl": "https://www.advancedbackgroundchecks.com/opt-out", "method": "email", "notes": "Email-verify flow: enter your email, click the link they send, then fill the actual opt-out form." }
+  { "id": "advancedbackgroundchecks", "name": "AdvancedBackgroundChecks", "optOutUrl": "https://www.advancedbackgroundchecks.com/opt-out", "method": "email", "notes": "Page is titled \"opt out of sale and sharing\" (CCPA legal wording) and doesn't obviously say \"remove me\" — it's the real removal flow anyway. Enter name+email, click the confirmation link they email you, then fill out the actual opt-out form that opens. Can take up to 45 days to fully process (slower than most of these)." }
 ]
