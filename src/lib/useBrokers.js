@@ -63,12 +63,13 @@ export function useBrokers(userId) {
   }, [userId])
 
   function remoteUpsert(broker) {
-    if (!supabaseEnabled || !userId) return
-    upsertRemoteBroker(userId, broker)
+    if (!supabaseEnabled || !userId) return Promise.resolve()
+    return upsertRemoteBroker(userId, broker)
       .then(() => setSyncState('synced'))
       .catch((err) => {
         setSyncState('error')
         setSyncError(err.message)
+        throw err
       })
   }
 
@@ -138,14 +139,16 @@ export function useBrokers(userId) {
   }
 
   function updateBroker(id, patch) {
+    let pending = Promise.resolve()
     setBrokers((prev) =>
       prev.map((b) => {
         if (b.id !== id) return b
         const updated = { ...b, ...patch }
-        remoteUpsert(updated)
+        pending = remoteUpsert(updated)
         return updated
       }),
     )
+    return pending
   }
 
   function addBroker({ name, optOutUrl, method, notes }) {

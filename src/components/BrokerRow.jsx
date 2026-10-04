@@ -7,16 +7,26 @@ export default function BrokerRow({ broker, onSetFoundOnSearch, onSubmit, onRech
   const [notes, setNotes] = useState(broker.notes)
   const [editingUrl, setEditingUrl] = useState(false)
   const [urlDraft, setUrlDraft] = useState(broker.optOutUrl)
+  const [urlSaving, setUrlSaving] = useState(false)
+  const [urlError, setUrlError] = useState('')
   const due = isDue(broker.nextRecheckDate)
 
   function saveNotes() {
     if (notes !== broker.notes) onUpdateNotes(broker.id, notes)
   }
 
-  function saveUrl(e) {
+  async function saveUrl(e) {
     e.preventDefault()
-    onUpdateUrl(broker.id, urlDraft)
-    setEditingUrl(false)
+    setUrlSaving(true)
+    setUrlError('')
+    try {
+      await onUpdateUrl(broker.id, urlDraft)
+      setEditingUrl(false)
+    } catch (err) {
+      setUrlError(`Didn't save: ${err.message}`)
+    } finally {
+      setUrlSaving(false)
+    }
   }
 
   return (
@@ -54,10 +64,16 @@ export default function BrokerRow({ broker, onSetFoundOnSearch, onSubmit, onRech
                 onChange={(e) => setUrlDraft(e.target.value)}
                 placeholder="Opt-out URL"
               />
-              <button type="submit">Save</button>
-              <button type="button" onClick={() => { setUrlDraft(broker.optOutUrl); setEditingUrl(false) }}>
+              <button type="submit" disabled={urlSaving}>
+                {urlSaving ? 'Saving…' : 'Save'}
+              </button>
+              <button
+                type="button"
+                onClick={() => { setUrlDraft(broker.optOutUrl); setUrlError(''); setEditingUrl(false) }}
+              >
                 Cancel
               </button>
+              {urlError && <span className="auth-error">{urlError}</span>}
             </form>
           ) : (
             <button type="button" className="link-button edit-url-toggle" onClick={() => setEditingUrl(true)}>
