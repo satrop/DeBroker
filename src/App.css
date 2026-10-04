@@ -244,12 +244,13 @@
 }
 
 .badge-not_checked { opacity: 0.6; }
-.badge-not_found { opacity: 0.6; }
+.badge-not_found { background: #e3f3e6; border-color: #9ccba7; color: #1e5c2b; }
 .badge-submitted { background: var(--warn-bg); border-color: var(--warn-border); }
 .badge-confirmed_removed { background: #e3f3e6; border-color: #9ccba7; color: #1e5c2b; }
 .badge-reappeared { background: #fbe3e1; border-color: #e3a39d; color: var(--danger); }
 
 @media (prefers-color-scheme: dark) {
+  .badge-not_found { background: #163b1e; color: #8fd79c; border-color: #2e6b3a; }
   .badge-confirmed_removed { background: #163b1e; color: #8fd79c; border-color: #2e6b3a; }
   .badge-reappeared { background: #3b1a17; color: #ff9a8f; border-color: #6b2e27; }
 }
