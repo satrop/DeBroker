@@ -1,0 +1,22 @@
+[
+  { "id": "whitepages", "name": "Whitepages", "optOutUrl": "https://www.whitepages.com/suppression-requests", "method": "form", "notes": "" },
+  { "id": "spokeo", "name": "Spokeo", "optOutUrl": "https://www.spokeo.com/optout", "method": "form", "notes": "" },
+  { "id": "beenverified", "name": "BeenVerified", "optOutUrl": "https://www.beenverified.com/app/optout/search", "method": "form", "notes": "" },
+  { "id": "truthfinder", "name": "TruthFinder", "optOutUrl": "https://www.truthfinder.com/opt-out/", "method": "form", "notes": "" },
+  { "id": "intelius", "name": "Intelius", "optOutUrl": "https://www.intelius.com/opt-out/", "method": "form", "notes": "" },
+  { "id": "peoplefinders", "name": "PeopleFinders", "optOutUrl": "https://www.peoplefinders.com/manage/", "method": "email", "notes": "Requires email verification step." },
+  { "id": "mylife", "name": "MyLife", "optOutUrl": "https://www.mylife.com/ccpa/index.pubview", "method": "form", "notes": "Known to be aggressive about re-listing; check carefully on recheck." },
+  { "id": "radaris", "name": "Radaris", "optOutUrl": "https://radaris.com/control/privacy", "method": "form", "notes": "" },
+  { "id": "fastpeoplesearch", "name": "FastPeopleSearch", "optOutUrl": "https://www.fastpeoplesearch.com/removal", "method": "form", "notes": "" },
+  { "id": "peoplelooker", "name": "PeopleLooker", "optOutUrl": "https://www.peoplelooker.com/optout", "method": "form", "notes": "" },
+  { "id": "ussearch", "name": "USSearch", "optOutUrl": "https://www.ussearch.com/opt-out/", "method": "form", "notes": "" },
+  { "id": "publicrecordsnow", "name": "PublicRecordsNow", "optOutUrl": "https://www.publicrecordsnow.com/optout/", "method": "form", "notes": "" },
+  { "id": "checkpeople", "name": "CheckPeople", "optOutUrl": "https://www.checkpeople.com/opt-out", "method": "form", "notes": "" },
+  { "id": "nuwber", "name": "Nuwber", "optOutUrl": "https://nuwber.com/removal/link", "method": "email", "notes": "Sends a removal confirmation link to your email." },
+  { "id": "thatsthem", "name": "ThatsThem", "optOutUrl": "https://thatsthem.com/optout", "method": "form", "notes": "" },
+  { "id": "instantcheckmate", "name": "Instant Checkmate", "optOutUrl": "https://www.instantcheckmate.com/opt-out/", "method": "form", "notes": "" },
+  { "id": "peekyou", "name": "PeekYou", "optOutUrl": "https://www.peekyou.com/about/contact/optout/", "method": "form", "notes": "" },
+  { "id": "familytreenow", "name": "FamilyTreeNow", "optOutUrl": "https://www.familytreenow.com/optout", "method": "form", "notes": "" },
+  { "id": "zabasearch", "name": "ZabaSearch", "optOutUrl": "https://www.zabasearch.com/block_records/", "method": "form", "notes": "" },
+  { "id": "advancedbackgroundchecks", "name": "AdvancedBackgroundChecks", "optOutUrl": "https://www.advancedbackgroundchecks.com/removal", "method": "form", "notes": "" }
+]
