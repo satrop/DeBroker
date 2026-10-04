@@ -20,3 +20,9 @@ export function formatDate(isoDate) {
   const d = new Date(isoDate + 'T00:00:00')
   return d.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })
 }
+
+export function daysUntil(isoDate) {
+  const today = new Date(todayISO() + 'T00:00:00')
+  const target = new Date(isoDate + 'T00:00:00')
+  return Math.round((target - today) / 86400000)
+}

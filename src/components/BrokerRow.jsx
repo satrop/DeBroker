@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import StatusBadge from './StatusBadge'
-import { formatDate, isDue } from '../lib/dates'
+import { formatDate, isDue, daysUntil } from '../lib/dates'
 
 export default function BrokerRow({ broker, onSetFoundOnSearch, onSubmit, onRecheck, onUpdateNotes, onUpdateUrl, onRemove }) {
   const [expanded, setExpanded] = useState(false)
@@ -36,7 +36,11 @@ export default function BrokerRow({ broker, onSetFoundOnSearch, onSubmit, onRech
         </div>
         <StatusBadge status={broker.status} />
         <div className="recheck-date">
-          {broker.nextRecheckDate ? (due ? `Due ${formatDate(broker.nextRecheckDate)}` : formatDate(broker.nextRecheckDate)) : 'Not applicable'}
+          {broker.nextRecheckDate
+            ? due
+              ? `Due ${formatDate(broker.nextRecheckDate)}`
+              : `${daysUntil(broker.nextRecheckDate)} days`
+            : 'Not applicable'}
         </div>
       </div>
 
